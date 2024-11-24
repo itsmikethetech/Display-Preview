@@ -16,6 +16,12 @@ class DisplayPreview:
         self.root.geometry('1280x720')
         self.root.protocol("WM_DELETE_WINDOW", self.on_closing)
 
+        self.cursor_image = cv2.imread("cursor.png", cv2.IMREAD_UNCHANGED)  # Load cursor image with alpha channel
+        if self.cursor_image is None:
+            messagebox.showerror("Error", "Cursor image 'cursor.png' not found.")
+            self.root.destroy()
+            return
+
         self.monitors = get_monitors()
         if not self.monitors:
             messagebox.showerror("Error", "No monitors found.")
@@ -54,15 +60,40 @@ class DisplayPreview:
                     screenshot = cv2.cvtColor(screenshot, cv2.COLOR_BGRA2RGB)
 
                     if self.cursor_var.get():
-                        cursor_x, cursor_y = pyautogui.position()
-                        cx, cy = cursor_x - monitor["left"], cursor_y - monitor["top"]
-                        if 0 <= cx < screenshot.shape[1] and 0 <= cy < screenshot.shape[0]:
-                            cv2.circle(screenshot, (cx, cy), 10, (0, 0, 255), -1)
+                        self._overlay_cursor(screenshot, monitor)
 
                     self._resize_and_update_preview(screenshot)
                     time.sleep(0.0167)
                 except Exception:
                     break
+
+    def _overlay_cursor(self, screenshot, monitor):
+        cursor_x, cursor_y = pyautogui.position()
+        cx, cy = cursor_x - monitor["left"], cursor_y - monitor["top"]
+
+        # Ensure cursor is within monitor bounds
+        if 0 <= cx < monitor["width"] and 0 <= cy < monitor["height"]:
+            h, w, _ = self.cursor_image.shape
+            x1, y1 = max(0, cx - w // 2), max(0, cy - h // 2)
+            x2, y2 = min(screenshot.shape[1], x1 + w), min(screenshot.shape[0], y1 + h)
+
+            # Adjust the cursor image dimensions to fit within bounds
+            cursor_x1, cursor_y1 = 0, 0
+            cursor_x2, cursor_y2 = x2 - x1, y2 - y1
+            if x1 < 0:
+                cursor_x1 -= x1
+                x1 = 0
+            if y1 < 0:
+                cursor_y1 -= y1
+                y1 = 0
+
+            # Extract ROI from screenshot and overlay the cursor
+            roi = screenshot[y1:y2, x1:x2]
+            cursor_alpha = self.cursor_image[cursor_y1:cursor_y2, cursor_x1:cursor_x2, 3] / 255.0
+            for c in range(3):  # Blend the cursor image channels
+                roi[:, :, c] = (1 - cursor_alpha) * roi[:, :, c] + cursor_alpha * self.cursor_image[cursor_y1:cursor_y2, cursor_x1:cursor_x2, c]
+            screenshot[y1:y2, x1:x2] = roi
+
 
     def _resize_and_update_preview(self, screenshot):
         frame_w, frame_h = self.preview_frame.winfo_width(), self.preview_frame.winfo_height()
