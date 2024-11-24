@@ -9,7 +9,7 @@ from screeninfo import get_monitors
 from PIL import Image, ImageTk
 import pyautogui
 
-class ScreenRecorderApp:
+class DisplayPreview:
     def __init__(self, root):
         self.root = root
 
@@ -101,7 +101,7 @@ class ScreenRecorderApp:
 if __name__ == "__main__":
     try:
         root = tk.Tk()
-        app = ScreenRecorderApp(root)
+        app = DisplayPreview(root)
         root.mainloop()
     except Exception as e:
         messagebox.showerror("Error", f"An unexpected error occurred: {e}")
