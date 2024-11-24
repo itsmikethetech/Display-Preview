@@ -12,6 +12,6 @@ To run as Python, you'll need the following dependencies:
 
 pip install pillow mss numpy opencv-python screeninfo
 
-These are automatically included with the build installer. 
+These are automatically included with the built installer. 
 
 Executable built using **PyInstaller**.
