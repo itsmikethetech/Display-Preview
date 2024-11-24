@@ -6,6 +6,9 @@ import mss
 import numpy as np
 import cv2
 from screeninfo import get_monitors
+from pygetwindow import getWindowsWithTitle
+from win32api import EnumDisplaySettings
+from win32con import ENUM_CURRENT_SETTINGS, ENUM_REGISTRY_SETTINGS
 from PIL import Image, ImageTk
 
 class DisplayPreview:
@@ -20,17 +23,19 @@ class DisplayPreview:
             messagebox.showerror("Error", "No monitors found.")
             return
 
+        # Use static refresh rates
+        self.refresh_rates = [1, 15, 30, 40, 60, 70, 90, 120, 144, 165]
+
         self.init_ui()
 
         self.preview_running = True
         threading.Thread(target=self._update_preview_thread, daemon=True).start()
         self.root.bind("<Configure>", self.resize_preview)
         self.cursor_visible = True
-        self.cursor_image = Image.open("cursor.png") 
-        self.cursor_image = self.cursor_image.convert("RGBA") 
+        self.cursor_image = Image.open("cursor.png")
+        self.cursor_image = self.cursor_image.convert("RGBA")
         self.show_cursor_var = tk.BooleanVar(value=True)
         self.show_cursor_checkbox = ttk.Checkbutton(self.root, text="Show Cursor", variable=self.show_cursor_var, command=self.toggle_cursor)
-        # Move the checkbox to the top-right corner
         self.show_cursor_checkbox.grid(row=0, column=2, padx=10, pady=5, sticky="ne")
         self.set_icon()
 
@@ -49,8 +54,19 @@ class DisplayPreview:
                                            width=25)
         self.monitor_combo.grid(row=0, column=1, padx=10, pady=5, sticky="w")
         self.monitor_combo.current(0)
+        self.monitor_combo.bind("<<ComboboxSelected>>", self.on_monitor_change)  # Bind monitor change
+
+        self.framerate_label = ttk.Label(self.root, text="Framerate:")
+        self.framerate_label.grid(row=0, column=2, padx=10, pady=5, sticky="e")
+        self.framerate_combo = ttk.Combobox(self.root, values=[str(rate) for rate in self.refresh_rates],
+                                             width=10)
+        self.framerate_combo.grid(row=0, column=3, padx=10, pady=5, sticky="w")
+
+        # Set the default framerate to 60 (index of 60 in the list)
+        self.framerate_combo.set("60")
+
         self.preview_frame = ttk.Frame(self.root)
-        self.preview_frame.grid(row=1, column=0, columnspan=3, pady=5, padx=10, sticky="nsew")
+        self.preview_frame.grid(row=1, column=0, columnspan=4, pady=5, padx=10, sticky="nsew")
         self.preview_label = ttk.Label(self.preview_frame)
         self.preview_label.pack(fill=tk.BOTH, expand=True)
         self.root.grid_rowconfigure(1, weight=1)
@@ -61,6 +77,10 @@ class DisplayPreview:
 
     def toggle_cursor(self):
         self.cursor_visible = self.show_cursor_var.get()
+
+    def on_monitor_change(self, event):
+        # You can leave the refresh rate unchanged when the monitor is changed, as we're using static rates
+        pass
 
     def _update_preview_thread(self):
         with mss.mss() as sct:
@@ -98,7 +118,9 @@ class DisplayPreview:
                         tk_image = ImageTk.PhotoImage(image=Image.fromarray(screenshot))
                         self.root.after(0, self._update_preview_label, tk_image)
 
-                    time.sleep(0.0167)
+                    # Adjust the sleep time based on the selected framerate
+                    selected_framerate = int(self.framerate_combo.get())
+                    time.sleep(1 / selected_framerate)
                 except tk.TclError:
                     break
 
@@ -109,7 +131,7 @@ class DisplayPreview:
         right = min(x + cursor_width // 2, image.shape[1])
         bottom = min(y + cursor_height // 2, image.shape[0])
         image_pil = Image.fromarray(image)
-        image_pil.paste(self.cursor_image, (left, top), self.cursor_image)  
+        image_pil.paste(self.cursor_image, (left, top), self.cursor_image)
         image[:] = np.array(image_pil)
 
     def _update_preview_label(self, tk_image):
@@ -135,23 +157,19 @@ class DisplayPreview:
         # Toggle fullscreen for the preview window
         self.is_fullscreen = not self.is_fullscreen
         if self.is_fullscreen:
-            # Hide the UI components (monitor selection, cursor checkbox)
             self.monitor_label.grid_forget()
             self.monitor_combo.grid_forget()
             self.show_cursor_checkbox.grid_forget()
 
-            # Enter fullscreen mode
             self.root.attributes("-fullscreen", True)
             monitor_index = self.monitor_combo.current()
             monitor = self.monitors[monitor_index]
             self.root.geometry(f"{monitor.width}x{monitor.height}+{monitor.x}+{monitor.y}")
         else:
-            # Show the UI components again
             self.monitor_label.grid(row=0, column=0, padx=10, pady=5, sticky="e")
             self.monitor_combo.grid(row=0, column=1, padx=10, pady=5, sticky="w")
             self.show_cursor_checkbox.grid(row=0, column=2, padx=10, pady=5, sticky="ne")
 
-            # Exit fullscreen mode
             self.root.attributes("-fullscreen", False)
             self.root.geometry('1280x720')
 
@@ -159,9 +177,6 @@ class DisplayPreview:
         return get_monitors()
 
 if __name__ == "__main__":
-    try:
-        root = tk.Tk()
-        app = DisplayPreview(root)
-        root.mainloop()
-    except Exception as e:
-        messagebox.showerror("Error", f"An unexpected error occurred: {e}")
+    root = tk.Tk()
+    app = DisplayPreview(root)
+    root.mainloop()
