@@ -31,6 +31,7 @@ class DisplayPreview:
         self.show_cursor_var = tk.BooleanVar(value=True)
         self.show_cursor_checkbox = ttk.Checkbutton(self.root, text="Show Cursor", variable=self.show_cursor_var, command=self.toggle_cursor)
         self.show_cursor_checkbox.grid(row=2, column=0, columnspan=2, pady=10)
+        self.set_icon()
 
     def init_ui(self):
         self.monitor_label = ttk.Label(self.root, text="Monitor:")
@@ -46,6 +47,9 @@ class DisplayPreview:
         self.preview_label.pack(fill=tk.BOTH, expand=True)
         self.root.grid_rowconfigure(1, weight=1)
         self.root.grid_columnconfigure(1, weight=1)
+
+    def set_icon(self):
+        self.root.iconbitmap('video.ico')
 
     def toggle_cursor(self):
         self.cursor_visible = self.show_cursor_var.get()
