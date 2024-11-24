@@ -4,7 +4,7 @@ Simple application to preview your display outputs, including displays created u
 
 The application captures monitor screens using the **mss** library, processes the images with **OpenCV**, and displays them in a **tkinter** GUI. It also overlays a customizable cursor icon onto the preview.
 
-![image](https://github.com/user-attachments/assets/3594f096-ed02-46a3-80da-d23a366c036f)
+[![image](https://github.com/user-attachments/assets/3594f096-ed02-46a3-80da-d23a366c036f)](https://github.com/itsmikethetech/Display-Preview/releases)
 
 # Instructions
 
