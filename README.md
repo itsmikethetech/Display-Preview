@@ -46,12 +46,12 @@ Includes a custom icon (video.ico) and user-friendly menu options for all featur
 # Python Instructions
 1. Install Python (version 3.8 or higher is recommended).
 2. Install the required libraries using pip:
-    - **pip install mss numpy opencv-python pillow screeninfo**
+    - ```pip install mss numpy opencv-python pillow screeninfo```
 3. Place the following required files in the same directory as the script:
     - cursor.png: Custom cursor image.
     - video.ico: Application icon.
 4. Run the script from the terminal or a Python IDE:
-    - **python display_preview.py**
+    - ```python DisplayPreview.pyw```
 
 # Thanks
 
