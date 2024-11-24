@@ -1,0 +1,99 @@
+2024-11-23 15:30:54,083 - root - INFO - FFmpeg was found.
+2024-11-23 15:30:54,083 - root - INFO - THE APP WAS OPEN
+2024-11-23 15:31:32,312 - root - INFO - FFmpeg was found.
+2024-11-23 15:31:32,312 - root - INFO - THE APP WAS OPEN
+2024-11-23 15:34:27,889 - root - INFO - FFmpeg was found.
+2024-11-23 15:34:27,889 - root - INFO - THE APP WAS OPEN
+2024-11-23 15:35:45,466 - root - INFO - FFmpeg was found.
+2024-11-23 15:35:45,466 - root - INFO - THE APP WAS OPEN
+2024-11-23 15:35:59,286 - root - INFO - FFmpeg was found.
+2024-11-23 15:35:59,286 - root - INFO - THE APP WAS OPEN
+2024-11-23 15:36:53,769 - root - INFO - FFmpeg was found.
+2024-11-23 15:36:53,769 - root - INFO - THE APP WAS OPEN
+2024-11-23 15:38:47,341 - root - INFO - FFmpeg was found.
+2024-11-23 15:38:47,345 - root - INFO - THE APP WAS OPEN
+2024-11-23 15:40:11,552 - root - INFO - FFmpeg was found.
+2024-11-23 15:40:11,552 - root - INFO - THE APP WAS OPEN
+2024-11-23 15:40:30,321 - root - INFO - FFmpeg was found.
+2024-11-23 15:40:30,321 - root - INFO - THE APP WAS OPEN
+2024-11-23 15:43:13,167 - root - INFO - FFmpeg was found.
+2024-11-23 15:43:13,168 - root - INFO - THE APP WAS OPEN
+2024-11-23 15:43:57,824 - root - INFO - FFmpeg was found.
+2024-11-23 15:43:57,824 - root - INFO - THE APP WAS OPEN
+2024-11-23 15:50:20,093 - root - INFO - FFmpeg was found.
+2024-11-23 15:50:20,094 - root - INFO - THE APP WAS OPEN
+2024-11-23 15:50:31,971 - root - INFO - FFmpeg was found.
+2024-11-23 15:50:31,971 - root - INFO - THE APP WAS OPEN
+2024-11-23 15:52:17,360 - root - INFO - FFmpeg was found.
+2024-11-23 15:52:17,361 - root - INFO - THE APP WAS OPEN
+2024-11-23 15:58:02,349 - root - INFO - FFmpeg was found.
+2024-11-23 15:58:02,350 - root - INFO - THE APP WAS OPEN
+2024-11-23 16:00:09,667 - root - INFO - FFmpeg was found.
+2024-11-23 16:00:09,667 - root - INFO - THE APP WAS OPEN
+2024-11-23 16:00:54,601 - root - INFO - FFmpeg was found.
+2024-11-23 16:00:54,601 - root - INFO - THE APP WAS OPEN
+2024-11-23 16:00:54,601 - root - ERROR - An error occurred: 'ScreenRecorderApp' object has no attribute 'window'
+2024-11-23 16:01:04,087 - root - INFO - FFmpeg was found.
+2024-11-23 16:01:04,087 - root - INFO - THE APP WAS OPEN
+2024-11-23 16:01:04,088 - root - ERROR - An error occurred: 'ScreenRecorderApp' object has no attribute 'geometry'
+2024-11-23 16:01:41,603 - root - INFO - FFmpeg was found.
+2024-11-23 16:01:41,603 - root - INFO - THE APP WAS OPEN
+2024-11-23 16:01:41,604 - root - ERROR - An error occurred: Wm.wm_geometry() takes from 1 to 2 positional arguments but 3 were given
+2024-11-23 16:01:55,885 - root - INFO - FFmpeg was found.
+2024-11-23 16:01:55,886 - root - INFO - THE APP WAS OPEN
+2024-11-23 16:01:55,886 - root - ERROR - An error occurred: Wm.wm_geometry() takes from 1 to 2 positional arguments but 3 were given
+2024-11-23 16:01:58,457 - root - INFO - FFmpeg was found.
+2024-11-23 16:01:58,457 - root - INFO - THE APP WAS OPEN
+2024-11-23 16:01:58,457 - root - ERROR - An error occurred: Wm.wm_geometry() takes from 1 to 2 positional arguments but 3 were given
+2024-11-23 16:02:14,679 - root - INFO - FFmpeg was found.
+2024-11-23 16:02:14,680 - root - INFO - THE APP WAS OPEN
+2024-11-23 16:02:14,680 - root - ERROR - An error occurred: bad geometry specifier "1920,1080"
+2024-11-23 16:02:29,109 - root - INFO - FFmpeg was found.
+2024-11-23 16:02:29,109 - root - INFO - THE APP WAS OPEN
+2024-11-23 16:03:00,686 - root - INFO - FFmpeg was found.
+2024-11-23 16:03:00,687 - root - INFO - THE APP WAS OPEN
+2024-11-23 16:04:39,018 - root - ERROR - An error occurred: 'ScreenRecorderApp' object has no attribute 'initialize_ffmpeg'
+2024-11-23 16:05:05,257 - root - INFO - FFmpeg was found.
+2024-11-23 16:05:05,257 - root - INFO - THE APP WAS OPEN
+2024-11-23 16:05:36,772 - root - ERROR - An error occurred: 'ScreenRecorderApp' object has no attribute 'initialize_ffmpeg'
+2024-11-23 16:05:56,050 - root - ERROR - An error occurred: 'ScreenRecorderApp' object has no attribute 'initialize_ffmpeg'
+2024-11-23 16:06:05,549 - root - ERROR - An error occurred: 'ScreenRecorderApp' object has no attribute 'initialize_ffmpeg'
+2024-11-23 16:06:22,719 - root - INFO - FFmpeg was found.
+2024-11-23 16:06:22,719 - root - INFO - THE APP WAS OPEN
+2024-11-23 16:27:55,257 - root - INFO - FFmpeg was found.
+2024-11-23 16:27:55,257 - root - INFO - THE APP WAS OPEN
+2024-11-23 16:28:07,102 - root - INFO - FFmpeg was found.
+2024-11-23 16:28:07,102 - root - INFO - THE APP WAS OPEN
+2024-11-23 16:28:25,083 - root - INFO - FFmpeg was found.
+2024-11-23 16:28:25,083 - root - INFO - THE APP WAS OPEN
+2024-11-23 16:28:37,862 - root - INFO - FFmpeg was found.
+2024-11-23 16:28:37,863 - root - INFO - THE APP WAS OPEN
+2024-11-23 16:29:17,706 - root - INFO - FFmpeg was found.
+2024-11-23 16:29:17,706 - root - INFO - THE APP WAS OPEN
+2024-11-23 16:29:24,986 - root - INFO - FFmpeg was found.
+2024-11-23 16:29:24,987 - root - INFO - THE APP WAS OPEN
+2024-11-23 16:29:35,431 - root - INFO - FFmpeg was found.
+2024-11-23 16:29:35,431 - root - INFO - THE APP WAS OPEN
+2024-11-23 16:30:14,166 - root - INFO - FFmpeg was found.
+2024-11-23 16:30:14,166 - root - INFO - THE APP WAS OPEN
+2024-11-23 16:41:14,970 - root - INFO - FFmpeg was found.
+2024-11-23 16:41:14,970 - root - INFO - THE APP WAS OPEN
+2024-11-23 16:41:38,341 - root - INFO - FFmpeg was found.
+2024-11-23 16:41:38,341 - root - INFO - THE APP WAS OPEN
+2024-11-23 16:42:10,189 - root - INFO - FFmpeg was found.
+2024-11-23 16:42:10,189 - root - INFO - THE APP WAS OPEN
+2024-11-23 16:43:08,232 - root - INFO - FFmpeg was found.
+2024-11-23 16:43:08,233 - root - INFO - THE APP WAS OPEN
+2024-11-23 19:37:49,642 - root - INFO - FFmpeg was found.
+2024-11-23 19:37:49,643 - root - INFO - THE APP WAS OPEN
+2024-11-23 19:56:03,592 - root - INFO - FFmpeg was found.
+2024-11-23 19:56:03,592 - root - INFO - THE APP WAS OPEN
+2024-11-23 20:05:57,054 - root - INFO - THE APP WAS OPEN
+2024-11-23 20:07:38,935 - root - INFO - THE APP WAS OPEN
+2024-11-23 20:07:38,994 - root - WARNING - No audio devices found. Proceeding without audio.
+2024-11-23 20:09:48,303 - root - INFO - THE APP WAS OPEN
+2024-11-23 20:09:48,359 - root - WARNING - No audio devices found. Proceeding without audio.
+2024-11-23 20:10:05,808 - root - INFO - THE APP WAS OPEN
+2024-11-23 20:10:05,865 - root - WARNING - No audio devices found. Proceeding without audio.
+2024-11-23 20:11:33,059 - root - INFO - THE APP WAS OPEN
+2024-11-23 20:11:33,116 - root - WARNING - No audio devices found. Proceeding without audio.
