@@ -2,7 +2,7 @@
 
 Simple application to preview your display outputs, including displays created using the Virtual Display Driver or IndirectDisplayDriver.
 
-![image](https://github.com/user-attachments/assets/0a3db2f7-f511-4c31-84d8-132c11c28e81)
+![image](https://github.com/user-attachments/assets/3594f096-ed02-46a3-80da-d23a366c036f)
 
 # Instructions
 
