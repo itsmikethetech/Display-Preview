@@ -1,5 +1,5 @@
 import tkinter as tk
-from tkinter import ttk, messagebox
+from tkinter import ttk, messagebox, Menu
 import threading
 import time
 import mss
@@ -10,7 +10,6 @@ from pygetwindow import getWindowsWithTitle
 from win32api import EnumDisplaySettings
 from win32con import ENUM_CURRENT_SETTINGS, ENUM_REGISTRY_SETTINGS
 from PIL import Image, ImageTk
-from ttkthemes import ThemedTk
 
 class DisplayPreview:
     def __init__(self, root):
@@ -18,22 +17,8 @@ class DisplayPreview:
         self.root.protocol("WM_DELETE_WINDOW", self.on_closing)
         self.root.title("Display Preview")
         self.root.geometry('1280x720')
-
-        # Initial theme setup
-
-        # Theme mapping
-        self.theme_map = {
-            "arc": "Arc Theme", "black": "Dark Theme", "blue": "Blue Theme", "clearlooks": "Clearlooks Theme",
-            "equilux": "Equilux Theme", "radiance": "Radiance Theme", "scidblue": "Scidblue Theme", "winxpblue": "WinXP Blue Theme",
-            "adapta": "Adapta Theme", "aquativo": "Aquativo Theme", "elegance": "Elegance Theme",
-            "itft1": "ITFT1 Theme", "keramik": "Keramik Theme", "kroc": "Kroc Theme", "plastik": "Plastik Theme",
-            "smog": "Smog Theme", "yaru": "Yaru Theme"
-        }
-        self.reverse_theme_map = {v: k for k, v in self.theme_map.items()}  # Reverse map for theme selection
-
-        self.current_theme = "black"
-        self.root.set_theme(self.current_theme)
-        self.root.configure(bg=self.get_current_theme_bg_color())
+        self.selected_monitor_index = 0
+        self.selected_framerate = 60 
 
         self.monitors = get_monitors()  # Use the correct method to fetch monitors
         if len(self.monitors) == 0:
@@ -42,11 +27,15 @@ class DisplayPreview:
 
         # Use static refresh rates
         self.refresh_rates = [1, 15, 30, 40, 60, 70, 90, 120, 144, 165]
+        self.cursor_visible = True
+        self.preview_running = True
+        self.is_fullscreen = False
 
         self.init_ui()
 
         self.preview_running = True
         threading.Thread(target=self._update_preview_thread, daemon=True).start()
+
         self.root.bind("<Configure>", self.resize_preview)
         self.cursor_visible = True
         self.cursor_image = Image.open("cursor.png")
@@ -59,39 +48,25 @@ class DisplayPreview:
         self.is_fullscreen = False
 
     def init_ui(self):
-        # Monitor selection
-        self.monitor_label = ttk.Label(self.root, text="Monitor:")
-        self.monitor_label.grid(row=0, column=0, padx=10, pady=5, sticky="e")
-        self.monitor_combo = ttk.Combobox(self.root, values=[f"Monitor {i+1}: ({monitor.width}x{monitor.height})"
-                                                            for i, monitor in enumerate(self.monitors)],
-                                        width=25)
-        self.monitor_combo.grid(row=0, column=1, padx=10, pady=5, sticky="w")
-        self.monitor_combo.current(0)
-        self.monitor_combo.bind("<<ComboboxSelected>>", self.on_monitor_change)
+        menu_bar = Menu(self.root)
 
-        # Framerate selection
-        self.framerate_label = ttk.Label(self.root, text="Framerate:")
-        self.framerate_label.grid(row=0, column=2, padx=10, pady=5, sticky="e")
-        self.framerate_combo = ttk.Combobox(self.root, values=[str(rate) for rate in self.refresh_rates],
-                                            width=10)
-        self.framerate_combo.grid(row=0, column=3, padx=10, pady=5, sticky="w")
-        self.framerate_combo.set("60")
+        monitor_menu = Menu(menu_bar, tearoff=0)
+        for i, monitor in enumerate(self.monitors):
+            monitor_menu.add_command(label=f"Monitor {i + 1}: ({monitor.width}x{monitor.height})",
+                                     command=lambda i=i: self.change_monitor(i))
+        menu_bar.add_cascade(label="Monitor", menu=monitor_menu)
 
-        # Theme selection
-        self.theme_label = ttk.Label(self.root, text="Select Theme:")
-        self.theme_label.grid(row=0, column=4, padx=10, pady=5, sticky="e")
-        # Use the display names for the theme combo
-        self.theme_combo = ttk.Combobox(self.root, values=list(self.theme_map.values()), width=20)
-        self.theme_combo.grid(row=0, column=5, padx=10, pady=5, sticky="w")
-        self.theme_combo.set(self.theme_map[self.current_theme])  # Set default theme
-        self.theme_combo.bind("<<ComboboxSelected>>", self.on_theme_change)
+        framerate_menu = Menu(menu_bar, tearoff=0)
+        for rate in self.refresh_rates:
+            framerate_menu.add_command(label=f"{rate} FPS",
+                                       command=lambda rate=rate: self.change_framerate(rate))
+        menu_bar.add_cascade(label="Framerate", menu=framerate_menu)
 
-        # Show cursor checkbox
-        self.show_cursor_var = tk.BooleanVar(value=True)
-        self.show_cursor_checkbox = ttk.Checkbutton(self.root, text="Show Cursor", variable=self.show_cursor_var, command=self.toggle_cursor)
-        self.show_cursor_checkbox.grid(row=0, column=6, padx=10, pady=5, sticky="ne")
+        menu_bar.add_command(label="Toggle Cursor", command=self.toggle_cursor)
+        menu_bar.add_command(label="Toggle Fullscreen (Alt+Return)", command=self.toggle_fullscreen)
 
-        # Preview Frame
+        self.root.config(menu=menu_bar)
+
         self.preview_frame = ttk.Frame(self.root)
         self.preview_frame.grid(row=1, column=0, columnspan=7, pady=5, padx=10, sticky="nsew")
         self.preview_label = ttk.Label(self.preview_frame)
@@ -103,35 +78,20 @@ class DisplayPreview:
         self.root.iconbitmap('video.ico')
 
     def toggle_cursor(self):
-        self.cursor_visible = self.show_cursor_var.get()
+        self.cursor_visible = not self.cursor_visible
 
-    def on_monitor_change(self, event):
-        pass
+    def change_framerate(self, framerate):
+        self.selected_framerate = framerate
 
-    def on_theme_change(self, event):
-        selected_display_name = self.theme_combo.get()
-        selected_theme = self.reverse_theme_map.get(selected_display_name, self.current_theme)
-        self.current_theme = selected_theme
-        self.root.set_theme(selected_theme)
-        self.root.configure(bg=self.get_current_theme_bg_color())
-
-    def get_current_theme_bg_color(self):
-        theme_colors = {
-            "arc": "#F0F0F0", "black": "#424242", "blue": "#6699cc", "clearlooks": "#efebe7",
-            "equilux": "#464646", "radiance": "#f6f4f2", "scidblue": "#eff0f1", "winxpblue": "#eff0f1",
-            "adapta": "#fafbfc", "aquativo": "#eff0f1", "elegance": "#d8d8d8",
-            "itft1": "#daeffd", "keramik": "#cccccc", "kroc": "#fcb64f", "plastik": "#efefef",
-            "smog": "#e7eaf0", "yaru": "#f5f6f7"
-        }
-        return theme_colors.get(self.current_theme, "#fafbfc")
+    def change_monitor(self, monitor_index):
+        self.selected_monitor_index = monitor_index
 
     def _update_preview_thread(self):
         with mss.mss() as sct:
             while self.preview_running:
                 try:
-                    monitor_index = self.monitor_combo.current()
-                    if monitor_index < len(sct.monitors) - 1:
-                        monitor = sct.monitors[monitor_index + 1]
+                    if self.selected_monitor_index < len(sct.monitors) - 1:
+                        monitor = sct.monitors[self.selected_monitor_index + 1]
                         screenshot = np.array(sct.grab(monitor))
                         screenshot = cv2.cvtColor(screenshot, cv2.COLOR_RGBA2RGB)
                         screenshot = cv2.cvtColor(screenshot, cv2.COLOR_BGR2RGB)
@@ -162,8 +122,7 @@ class DisplayPreview:
                         self.root.after(0, self._update_preview_label, tk_image)
 
                     # Adjust the sleep time based on the selected framerate
-                    selected_framerate = int(self.framerate_combo.get())
-                    time.sleep(1 / selected_framerate)
+                    time.sleep(1 / self.selected_framerate)
                 except tk.TclError:
                     break
 
@@ -200,13 +159,13 @@ class DisplayPreview:
         self.is_fullscreen = not self.is_fullscreen
         if self.is_fullscreen:
             self.root.attributes("-fullscreen", True)
-            monitor = self.monitors[self.monitor_combo.current()]
+            monitor = self.monitors[self.selected_monitor_index]
             self.root.geometry(f"{monitor.width}x{monitor.height}+{monitor.left}+{monitor.top}")
         else:
             self.root.attributes("-fullscreen", False)
             self.root.geometry('1280x720')
 
 if __name__ == "__main__":
-    root = ThemedTk(theme="arc")
+    root = tk.Tk()
     app = DisplayPreview(root)
     root.mainloop()
