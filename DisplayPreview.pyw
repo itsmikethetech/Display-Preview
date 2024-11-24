@@ -1,12 +1,10 @@
 import tkinter as tk
 from tkinter import ttk, messagebox
 import threading
-import os
 import time
 import mss
 import numpy as np
 import cv2
-from configparser import ConfigParser
 from screeninfo import get_monitors
 from PIL import Image, ImageTk
 import pyautogui
@@ -18,9 +16,6 @@ class ScreenRecorderApp:
         self.root.protocol("WM_DELETE_WINDOW", self.on_closing)
         self.root.title("Display Preview")
         root.geometry('1280x720')
-        self.config = ConfigParser()
-        self.config_file = 'config.ini'
-        self.load_config()
 
         self.monitors = self.get_monitors()
         if len(self.monitors) == 0:
@@ -46,14 +41,6 @@ class ScreenRecorderApp:
 
     def set_icon(self):
         self.root.iconbitmap('video.ico')
-
-    def load_config(self):
-        if os.path.exists(self.config_file):
-            self.config.read(self.config_file)
-        else:
-            self.config['Settings'] = {'monitor': 0}
-            with open(self.config_file, 'w') as configfile:
-                self.config.write(configfile)
 
     def init_ui(self):
         self.monitor_label = ttk.Label(self.root, text="Monitor:")
