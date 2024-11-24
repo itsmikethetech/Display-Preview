@@ -13,7 +13,7 @@ class DisplayPreview:
         self.root = root
         self.root.protocol("WM_DELETE_WINDOW", self.on_closing)
         self.root.title("Display Preview")
-        root.geometry('1280x720')
+        self.root.geometry('1280x720')
 
         self.monitors = self.get_monitors()
         if len(self.monitors) == 0:
@@ -30,8 +30,16 @@ class DisplayPreview:
         self.cursor_image = self.cursor_image.convert("RGBA") 
         self.show_cursor_var = tk.BooleanVar(value=True)
         self.show_cursor_checkbox = ttk.Checkbutton(self.root, text="Show Cursor", variable=self.show_cursor_var, command=self.toggle_cursor)
-        self.show_cursor_checkbox.grid(row=2, column=0, columnspan=2, pady=10)
+        # Move the checkbox to the top-right corner
+        self.show_cursor_checkbox.grid(row=0, column=2, padx=10, pady=5, sticky="ne")
         self.set_icon()
+
+        # Bind Escape and Alt+Enter keys to toggle fullscreen mode
+        self.root.bind("<Escape>", self.toggle_fullscreen)
+        self.root.bind("<Alt-Return>", self.toggle_fullscreen)
+
+        # Initial fullscreen flag
+        self.is_fullscreen = False
 
     def init_ui(self):
         self.monitor_label = ttk.Label(self.root, text="Monitor:")
@@ -42,7 +50,7 @@ class DisplayPreview:
         self.monitor_combo.grid(row=0, column=1, padx=10, pady=5, sticky="w")
         self.monitor_combo.current(0)
         self.preview_frame = ttk.Frame(self.root)
-        self.preview_frame.grid(row=1, column=0, columnspan=2, pady=5, padx=10, sticky="nsew")
+        self.preview_frame.grid(row=1, column=0, columnspan=3, pady=5, padx=10, sticky="nsew")
         self.preview_label = ttk.Label(self.preview_frame)
         self.preview_label.pack(fill=tk.BOTH, expand=True)
         self.root.grid_rowconfigure(1, weight=1)
@@ -122,6 +130,30 @@ class DisplayPreview:
         self.close_preview()
         self.root.quit()
         self.root.destroy()
+
+    def toggle_fullscreen(self, event=None):
+        # Toggle fullscreen for the preview window
+        self.is_fullscreen = not self.is_fullscreen
+        if self.is_fullscreen:
+            # Hide the UI components (monitor selection, cursor checkbox)
+            self.monitor_label.grid_forget()
+            self.monitor_combo.grid_forget()
+            self.show_cursor_checkbox.grid_forget()
+
+            # Enter fullscreen mode
+            self.root.attributes("-fullscreen", True)
+            monitor_index = self.monitor_combo.current()
+            monitor = self.monitors[monitor_index]
+            self.root.geometry(f"{monitor.width}x{monitor.height}+{monitor.x}+{monitor.y}")
+        else:
+            # Show the UI components again
+            self.monitor_label.grid(row=0, column=0, padx=10, pady=5, sticky="e")
+            self.monitor_combo.grid(row=0, column=1, padx=10, pady=5, sticky="w")
+            self.show_cursor_checkbox.grid(row=0, column=2, padx=10, pady=5, sticky="ne")
+
+            # Exit fullscreen mode
+            self.root.attributes("-fullscreen", False)
+            self.root.geometry('1280x720')
 
     def get_monitors(self):
         return get_monitors()
