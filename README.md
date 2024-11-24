@@ -32,7 +32,7 @@ Preview automatically resizes when the application window is resized.
 Includes a custom icon (video.ico) and user-friendly menu options for all features.
 
 # Python Dependencies
-> [!IMPORTANT]
+> [!WARNING]
 > These are **only** required if running the Python script.
 > These are **automatically included** with the built **executable**.
 
