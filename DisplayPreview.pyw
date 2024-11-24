@@ -25,7 +25,7 @@ class DisplayPreview:
         self.theme_map = {
             "arc": "Arc Theme", "black": "Dark Theme", "blue": "Blue Theme", "clearlooks": "Clearlooks Theme",
             "equilux": "Equilux Theme", "radiance": "Radiance Theme", "scidblue": "Scidblue Theme", "winxpblue": "WinXP Blue Theme",
-            "adapta": "Adapta Theme", "aquativo": "Aquativo Theme", "breeze": "Breeze Theme", "elegance": "Elegance Theme",
+            "adapta": "Adapta Theme", "aquativo": "Aquativo Theme", "elegance": "Elegance Theme",
             "itft1": "ITFT1 Theme", "keramik": "Keramik Theme", "kroc": "Kroc Theme", "plastik": "Plastik Theme",
             "smog": "Smog Theme", "yaru": "Yaru Theme"
         }
@@ -119,7 +119,7 @@ class DisplayPreview:
         theme_colors = {
             "arc": "#F0F0F0", "black": "#424242", "blue": "#6699cc", "clearlooks": "#efebe7",
             "equilux": "#464646", "radiance": "#f6f4f2", "scidblue": "#eff0f1", "winxpblue": "#eff0f1",
-            "adapta": "#fafbfc", "aquativo": "#eff0f1", "breeze": "#eff0f1", "elegance": "#d8d8d8",
+            "adapta": "#fafbfc", "aquativo": "#eff0f1", "elegance": "#d8d8d8",
             "itft1": "#daeffd", "keramik": "#cccccc", "kroc": "#fcb64f", "plastik": "#efefef",
             "smog": "#e7eaf0", "yaru": "#f5f6f7"
         }
