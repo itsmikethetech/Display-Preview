@@ -101,7 +101,7 @@ class ScreenRecorderApp:
 
                         tk_image = ImageTk.PhotoImage(image=Image.fromarray(screenshot))
                         self.root.after(0, self._update_preview_label, tk_image)
-                    time.sleep(0.03)
+                    time.sleep(0.0167)
                 except tk.TclError:
                     break
 
