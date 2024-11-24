@@ -9,6 +9,7 @@ import cv2
 from configparser import ConfigParser
 from screeninfo import get_monitors
 from PIL import Image, ImageTk
+import pyautogui
 
 class ScreenRecorderApp:
     def __init__(self, root):
@@ -57,6 +58,7 @@ class ScreenRecorderApp:
     def init_ui(self):
         self.monitor_label = ttk.Label(self.root, text="Monitor:")
         self.monitor_label.grid(row=0, column=0, padx=10, pady=5, sticky="e")
+        
         self.monitor_combo = ttk.Combobox(self.root, values=[
             f"Monitor {i+1}: ({monitor.width}x{monitor.height})"
             for i, monitor in enumerate(self.monitors)
@@ -65,8 +67,13 @@ class ScreenRecorderApp:
         self.monitor_combo.current(0)
         self.monitor_combo.config(state="readonly")
 
+        # Add a checkbox to toggle cursor visibility
+        self.cursor_var = tk.BooleanVar(value=True)  # Default to True (cursor visible)
+        self.cursor_check = ttk.Checkbutton(self.root, text="Show Cursor", variable=self.cursor_var)
+        self.cursor_check.grid(row=0, column=2, padx=10, pady=5)
+
         self.preview_frame = ttk.Frame(self.root)
-        self.preview_frame.grid(row=1, column=0, columnspan=2, pady=5, padx=10, sticky="nsew")
+        self.preview_frame.grid(row=1, column=0, columnspan=3, pady=5, padx=10, sticky="nsew")
         self.preview_label = ttk.Label(self.preview_frame)
         self.preview_label.pack(fill=tk.BOTH, expand=True)
 
@@ -81,30 +88,42 @@ class ScreenRecorderApp:
                     monitor_index = self.monitor_combo.current()
                     if monitor_index < len(sct.monitors) - 1:
                         monitor = sct.monitors[monitor_index + 1]
+                        
+                        # Capture the screen (BGRA format)
                         screenshot = np.array(sct.grab(monitor))
-                        screenshot = cv2.cvtColor(screenshot, cv2.COLOR_RGBA2RGB)
-                        screenshot = cv2.cvtColor(screenshot, cv2.COLOR_BGR2RGB)
-
-                        # Get current frame size
+                        
+                        # Convert from BGRA to RGB
+                        screenshot = cv2.cvtColor(screenshot, cv2.COLOR_BGRA2RGB)
+                        
+                        # If cursor visibility is enabled, draw the cursor
+                        if self.cursor_var.get():  # Check if cursor is enabled
+                            cursor_x, cursor_y = pyautogui.position()
+                            # Adjust cursor position relative to the selected monitor
+                            cursor_x -= monitor["left"]
+                            cursor_y -= monitor["top"]
+                            
+                            # Draw the cursor on the frame (e.g., as a red circle)
+                            if 0 <= cursor_x < screenshot.shape[1] and 0 <= cursor_y < screenshot.shape[0]:
+                                cv2.circle(screenshot, (cursor_x, cursor_y), 10, (0, 0, 255), -1)  # Red circle, radius=10
+                        
+                        # Resize screenshot to fit the preview frame
                         frame_width = self.preview_frame.winfo_width()
                         frame_height = self.preview_frame.winfo_height()
 
                         if frame_width > 0 and frame_height > 0:
-                            # Calculate aspect-ratio-preserving dimensions
                             height, width, _ = screenshot.shape
                             scale = min(frame_width / width, frame_height / height)
                             new_width = int(width * scale)
                             new_height = int(height * scale)
-
-                            # Resize screenshot while preserving aspect ratio
                             screenshot = cv2.resize(screenshot, (new_width, new_height), interpolation=cv2.INTER_AREA)
 
+                        # Convert to tkinter-compatible image
                         tk_image = ImageTk.PhotoImage(image=Image.fromarray(screenshot))
                         self.root.after(0, self._update_preview_label, tk_image)
-                    time.sleep(0.0167)
+
+                    time.sleep(0.0167)  # Target 60 fps
                 except tk.TclError:
                     break
-
 
     def _update_preview_label(self, tk_image):
         if self.preview_running:
