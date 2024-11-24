@@ -10,17 +10,9 @@ from configparser import ConfigParser
 from screeninfo import get_monitors
 from PIL import Image, ImageTk
 
-from audio_manager import AudioManager
-from area_selector import AreaSelector
-from logging_config import setup_logging
-
-logger = setup_logging()
-
 class ScreenRecorderApp:
     def __init__(self, root):
         self.root = root
-
-        logger.info("THE APP WAS OPEN")
 
         self.root.protocol("WM_DELETE_WINDOW", self.on_closing)
         self.root.title("Display Preview")
@@ -28,18 +20,6 @@ class ScreenRecorderApp:
         self.config = ConfigParser()
         self.config_file = 'config.ini'
         self.load_config()
-
-        try:
-            self.audio_manager = AudioManager()
-            self.audio_devices = self.audio_manager.audio_devices
-            if len(self.audio_devices) == 0:
-                logger.warning("No audio devices found. Proceeding without audio.")
-                self.audio_devices = []  # Allow the app to continue without audio
-        except Exception as e:
-            logger.error(f"AudioManager initialization failed: {e}")
-            self.audio_manager = None
-            self.audio_devices = []
-
 
         self.monitors = self.get_monitors()
         if len(self.monitors) == 0:
@@ -54,7 +34,6 @@ class ScreenRecorderApp:
         self.running = False
         self.elapsed_time = 0
         self.record_area = None
-        self.area_selector = AreaSelector(root)
         self.preview_running = False
 
         # Start preview by default
@@ -147,10 +126,6 @@ class ScreenRecorderApp:
         self.root.quit()
         self.root.destroy()
 
-    def create_output_folder(self):
-        self.output_folder = os.path.join(os.getcwd(), "OutputFiles")
-        os.makedirs(self.output_folder, exist_ok=True)
-
     def get_monitors(self):
         return get_monitors()
 
@@ -160,5 +135,4 @@ if __name__ == "__main__":
         app = ScreenRecorderApp(root)
         root.mainloop()
     except Exception as e:
-        logger.error(f"An error occurred: {e}")
         messagebox.showerror("Error", f"An unexpected error occurred: {e}")
