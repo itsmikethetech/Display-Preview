@@ -24,5 +24,5 @@ Executable built using **PyInstaller**.
 
 This script is heavily influenced and inspired by **LexTrack's MiniScreenRecorder**. I essentially reverse engineered his MiniScreenRecorder script to get the preview window, then added features from there. This project helped me learn a TON!
 
-https://github.com/lextrack/MiniScreenRecorder
+https://github.com/lextrack/MiniScreenRecorder (MIT)
 
