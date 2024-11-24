@@ -10,7 +10,7 @@ https://github.com/lextrack/MiniScreenRecorder
 
 To run as Python, you'll need the following dependencies:
 
-pip install pillow mss numpy opencv-python screeninfo
+pip install pygetwindow screeninfo pillow mss numpy opencv-python screeninfo pywin32
 
 These are automatically included with the built installer. 
 
