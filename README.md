@@ -8,7 +8,7 @@ Simple application to preview your display outputs, including displays created u
 
 To use: Download, Extract, Run.
 
-https://github.com/itsmikethetech/Display-Preview/releases/tag/24.11.24
+https://github.com/itsmikethetech/Display-Preview/releases
 
 # Python Instructions
 
