@@ -4,6 +4,10 @@ Simple application to preview your display outputs, including displays created u
 
 ![image](https://github.com/user-attachments/assets/0a3db2f7-f511-4c31-84d8-132c11c28e81)
 
+To use: Download, Extract, Run.
+
+https://github.com/itsmikethetech/Display-Preview/releases/tag/24.11.24
+
 To run as Python, you'll need the following dependencies:
 
 pip install pygetwindow screeninfo pillow mss numpy opencv-python screeninfo pywin32
