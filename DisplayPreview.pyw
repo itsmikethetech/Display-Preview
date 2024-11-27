@@ -84,7 +84,7 @@ class DisplayPreview:
             try:
                 frame = self.camera.grab()
                 if frame is not None:
-                    frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+                    # Remove the BGR to RGB conversion
                     frame_width = self.preview_frame.winfo_width()
                     frame_height = self.preview_frame.winfo_height()
 
@@ -109,12 +109,14 @@ class DisplayPreview:
                         preview_cursor_y = min(max(0, preview_cursor_y), new_height - 1)
                         self.draw_cursor(frame, preview_cursor_x, preview_cursor_y)
 
+                    # Convert directly to a Tkinter-compatible image
                     tk_image = ImageTk.PhotoImage(image=Image.fromarray(frame))
                     self.root.after(0, self._update_preview_label, tk_image)
 
                 time.sleep(1 / self.selected_framerate)
             except tk.TclError:
                 break
+
 
     def draw_cursor(self, image, x, y):
         cursor_width, cursor_height = self.cursor_image.size
