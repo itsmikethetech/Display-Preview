@@ -84,7 +84,6 @@ class DisplayPreview:
             try:
                 frame = self.camera.grab()
                 if frame is not None:
-                    # Remove the BGR to RGB conversion
                     frame_width = self.preview_frame.winfo_width()
                     frame_height = self.preview_frame.winfo_height()
 
@@ -109,14 +108,12 @@ class DisplayPreview:
                         preview_cursor_y = min(max(0, preview_cursor_y), new_height - 1)
                         self.draw_cursor(frame, preview_cursor_x, preview_cursor_y)
 
-                    # Convert directly to a Tkinter-compatible image
                     tk_image = ImageTk.PhotoImage(image=Image.fromarray(frame))
                     self.root.after(0, self._update_preview_label, tk_image)
 
                 time.sleep(1 / self.selected_framerate)
             except tk.TclError:
                 break
-
 
     def draw_cursor(self, image, x, y):
         cursor_width, cursor_height = self.cursor_image.size
@@ -139,7 +136,7 @@ class DisplayPreview:
 
     def close_preview(self):
         self.preview_running = False
-        self.preview_label.config(image="")  # Remove image
+        self.preview_label.config(image="") 
         self.preview_label.image = None
         self.camera.stop()
 
@@ -154,11 +151,11 @@ class DisplayPreview:
             self.root.attributes("-fullscreen", True)
             monitor = self.monitors[self.selected_monitor_index]
             self.root.geometry(f"{monitor.width}x{monitor.height}+{monitor.x}+{monitor.y}")
-            self.root.config(menu="")  # Hide the menu bar
+            self.root.config(menu="") 
         else:
             self.root.attributes("-fullscreen", False)
             self.root.geometry("1280x720")
-            self.root.config(menu=self.menu_bar)  # Show the menu bar
+            self.root.config(menu=self.menu_bar) 
 
 if __name__ == "__main__":
     root = tk.Tk()
