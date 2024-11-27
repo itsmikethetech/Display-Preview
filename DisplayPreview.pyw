@@ -2,7 +2,7 @@ import tkinter as tk
 from tkinter import ttk, messagebox, Menu
 import threading
 import time
-import mss
+import dxcam
 import numpy as np
 import cv2
 from screeninfo import get_monitors
@@ -28,6 +28,7 @@ class DisplayPreview:
         self.is_fullscreen = False
 
         self.init_ui()
+        self.camera = dxcam.create(output_idx=self.selected_monitor_index)
         threading.Thread(target=self._update_preview_thread, daemon=True).start()
 
         self.root.bind("<Configure>", self.resize_preview)
@@ -76,45 +77,44 @@ class DisplayPreview:
 
     def change_monitor(self, monitor_index):
         self.selected_monitor_index = monitor_index
+        self.camera = dxcam.create(output_idx=self.selected_monitor_index)
 
     def _update_preview_thread(self):
-        with mss.mss() as sct:
-            while self.preview_running:
-                try:
-                    if self.selected_monitor_index < len(sct.monitors) - 1:
-                        monitor = sct.monitors[self.selected_monitor_index + 1]
-                        screenshot = np.array(sct.grab(monitor))
-                        screenshot = cv2.cvtColor(screenshot, cv2.COLOR_RGBA2RGB)
-                        screenshot = cv2.cvtColor(screenshot, cv2.COLOR_BGR2RGB)
-                        frame_width = self.preview_frame.winfo_width()
-                        frame_height = self.preview_frame.winfo_height()
+        while self.preview_running:
+            try:
+                frame = self.camera.grab()
+                if frame is not None:
+                    frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+                    frame_width = self.preview_frame.winfo_width()
+                    frame_height = self.preview_frame.winfo_height()
 
-                        if frame_width > 0 and frame_height > 0:
-                            height, width, _ = screenshot.shape
-                            scale = min(frame_width / width, frame_height / height)
-                            new_width = int(width * scale)
-                            new_height = int(height * scale)
+                    if frame_width > 0 and frame_height > 0:
+                        height, width, _ = frame.shape
+                        scale = min(frame_width / width, frame_height / height)
+                        new_width = int(width * scale)
+                        new_height = int(height * scale)
 
-                            screenshot = cv2.resize(screenshot, (new_width, new_height), interpolation=cv2.INTER_AREA)
+                        frame = cv2.resize(frame, (new_width, new_height), interpolation=cv2.INTER_AREA)
 
-                        if self.cursor_visible:
-                            cursor_x, cursor_y = self.root.winfo_pointerxy()
-                            cursor_x = cursor_x - monitor["left"]
-                            cursor_y = cursor_y - monitor["top"]
-                            x_scale = new_width / monitor["width"]
-                            y_scale = new_height / monitor["height"]
-                            preview_cursor_x = int(cursor_x * x_scale)
-                            preview_cursor_y = int(cursor_y * y_scale)
-                            preview_cursor_x = min(max(0, preview_cursor_x), new_width - 1)
-                            preview_cursor_y = min(max(0, preview_cursor_y), new_height - 1)
-                            self.draw_cursor(screenshot, preview_cursor_x, preview_cursor_y)
+                    if self.cursor_visible:
+                        cursor_x, cursor_y = self.root.winfo_pointerxy()
+                        monitor = self.monitors[self.selected_monitor_index]
+                        cursor_x -= monitor.x
+                        cursor_y -= monitor.y
+                        x_scale = new_width / monitor.width
+                        y_scale = new_height / monitor.height
+                        preview_cursor_x = int(cursor_x * x_scale)
+                        preview_cursor_y = int(cursor_y * y_scale)
+                        preview_cursor_x = min(max(0, preview_cursor_x), new_width - 1)
+                        preview_cursor_y = min(max(0, preview_cursor_y), new_height - 1)
+                        self.draw_cursor(frame, preview_cursor_x, preview_cursor_y)
 
-                        tk_image = ImageTk.PhotoImage(image=Image.fromarray(screenshot))
-                        self.root.after(0, self._update_preview_label, tk_image)
+                    tk_image = ImageTk.PhotoImage(image=Image.fromarray(frame))
+                    self.root.after(0, self._update_preview_label, tk_image)
 
-                    time.sleep(1 / self.selected_framerate)
-                except tk.TclError:
-                    break
+                time.sleep(1 / self.selected_framerate)
+            except tk.TclError:
+                break
 
     def draw_cursor(self, image, x, y):
         cursor_width, cursor_height = self.cursor_image.size
@@ -139,6 +139,7 @@ class DisplayPreview:
         self.preview_running = False
         self.preview_label.config(image="")  # Remove image
         self.preview_label.image = None
+        self.camera.stop()
 
     def on_closing(self):
         self.close_preview()
